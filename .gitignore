@@ -1,0 +1,13 @@
+# 環境変数（秘密情報を含む）
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# エディタ
+.vscode/
+.idea/
+
+# Docker volumes（ホスト側に出ない想定だが念のため）
+db_data/
