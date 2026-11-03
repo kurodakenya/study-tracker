@@ -1,8 +1,8 @@
 <title>資格管理ツール 設計書</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-  /* Layout: document-style vertical flow, max-width prose column with sidebar TOC on wide screens */
   :root {
     --bg: #fafaf9;
     --fg: #1c1917;
@@ -30,216 +30,71 @@
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0c0a09;
-      --fg: #e7e5e4;
-      --fg-muted: #a8a29e;
-      --surface: #1c1917;
-      --surface-alt: #292524;
-      --border: #44403c;
-      --accent: #60a5fa;
-      --accent-light: #1e3a5f;
-      --accent-fg: #93bbfd;
-      --green: #4ade80;
-      --green-light: #14532d;
-      --green-fg: #86efac;
-      --amber: #fbbf24;
-      --amber-light: #451a03;
-      --amber-fg: #fcd34d;
-      --red: #f87171;
-      --red-light: #450a0a;
-      --red-fg: #fca5a5;
-      --purple: #a78bfa;
-      --purple-light: #2e1065;
-      --purple-fg: #c4b5fd;
+      --bg: #0c0a09; --fg: #e7e5e4; --fg-muted: #a8a29e;
+      --surface: #1c1917; --surface-alt: #292524; --border: #44403c;
+      --accent: #60a5fa; --accent-light: #1e3a5f; --accent-fg: #93bbfd;
+      --green: #4ade80; --green-light: #14532d; --green-fg: #86efac;
+      --amber: #fbbf24; --amber-light: #451a03; --amber-fg: #fcd34d;
+      --red: #f87171; --red-light: #450a0a; --red-fg: #fca5a5;
+      --purple: #a78bfa; --purple-light: #2e1065; --purple-fg: #c4b5fd;
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0c0a09;
-    --fg: #e7e5e4;
-    --fg-muted: #a8a29e;
-    --surface: #1c1917;
-    --surface-alt: #292524;
-    --border: #44403c;
-    --accent: #60a5fa;
-    --accent-light: #1e3a5f;
-    --accent-fg: #93bbfd;
-    --green: #4ade80;
-    --green-light: #14532d;
-    --green-fg: #86efac;
-    --amber: #fbbf24;
-    --amber-light: #451a03;
-    --amber-fg: #fcd34d;
-    --red: #f87171;
-    --red-light: #450a0a;
-    --red-fg: #fca5a5;
-    --purple: #a78bfa;
-    --purple-light: #2e1065;
-    --purple-fg: #c4b5fd;
+    --bg: #0c0a09; --fg: #e7e5e4; --fg-muted: #a8a29e;
+    --surface: #1c1917; --surface-alt: #292524; --border: #44403c;
+    --accent: #60a5fa; --accent-light: #1e3a5f; --accent-fg: #93bbfd;
+    --green: #4ade80; --green-light: #14532d; --green-fg: #86efac;
+    --amber: #fbbf24; --amber-light: #451a03; --amber-fg: #fcd34d;
+    --red: #f87171; --red-light: #450a0a; --red-fg: #fca5a5;
+    --purple: #a78bfa; --purple-light: #2e1065; --purple-fg: #c4b5fd;
     color-scheme: dark;
   }
-
-  body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--font-body);
-    line-height: 1.8;
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
-    padding-block: 0;
-  }
-
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); line-height: 1.8; padding: 0 max(16px, env(safe-area-inset-left, 0px)); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  .wrapper {
-    max-width: 960px;
-    margin: 0 auto;
-    padding-block: 48px 80px;
-  }
+  .wrapper { max-width: 960px; margin: 0 auto; padding-block: 48px 80px; }
 
   /* Header */
-  .doc-header {
-    margin-bottom: 48px;
-    padding-bottom: 32px;
-    border-bottom: 2px solid var(--border);
-  }
-  .doc-header h1 {
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-    text-wrap: balance;
-    margin-bottom: 12px;
-  }
-  .doc-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px 32px;
-    font-size: 0.875rem;
-    color: var(--fg-muted);
-  }
+  .doc-header { margin-bottom: 48px; padding-bottom: 32px; border-bottom: 2px solid var(--border); }
+  .doc-header h1 { font-size: 2rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.3; margin-bottom: 12px; }
+  .doc-meta { display: flex; flex-wrap: wrap; gap: 16px 32px; font-size: 0.875rem; color: var(--fg-muted); }
   .doc-meta dt { font-weight: 500; display: inline; }
   .doc-meta dt::after { content: '：'; }
-  .doc-meta dd { display: inline; margin-right: 0; }
+  .doc-meta dd { display: inline; }
   .doc-meta .pair { white-space: nowrap; }
 
   /* Progress banner */
-  .progress-banner {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 48px;
-  }
-  .progress-banner h2 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .progress-bar-track {
-    height: 8px;
-    background: var(--surface-alt);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 12px;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 4px;
-    transition: width 0.3s;
-  }
-  .progress-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 8px;
-    list-style: none;
-    font-size: 0.8125rem;
-  }
-  .progress-steps li {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+  .progress-banner { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 48px; }
+  .progress-banner h2 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .progress-bar-track { height: 8px; background: var(--surface-alt); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.3s; }
+  .progress-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; list-style: none; font-size: 0.8125rem; }
+  .progress-steps li { display: flex; align-items: center; gap: 6px; }
   .step-done { color: var(--green); }
+  .step-wip { color: var(--amber); }
   .step-pending { color: var(--fg-muted); }
   .check { display: inline-block; width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
   .check-done { background: var(--green); }
+  .check-wip { background: var(--amber); }
   .check-pending { background: var(--border); }
 
   /* Sections */
-  section {
-    margin-bottom: 48px;
-  }
-  h2 {
-    font-size: 1.375rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-    letter-spacing: -0.01em;
-  }
-  h3 {
-    font-size: 1.125rem;
-    font-weight: 700;
-    margin-top: 28px;
-    margin-bottom: 12px;
-  }
-  h4 {
-    font-size: 0.9375rem;
-    font-weight: 700;
-    margin-top: 20px;
-    margin-bottom: 8px;
-    color: var(--fg-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.75rem;
-  }
+  section { margin-bottom: 48px; }
+  h2 { font-size: 1.375rem; font-weight: 700; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.125rem; font-weight: 700; margin-top: 28px; margin-bottom: 12px; }
+  h4 { font-size: 0.75rem; font-weight: 700; margin-top: 20px; margin-bottom: 8px; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
   p { margin-bottom: 12px; }
   p:last-child { margin-bottom: 0; }
 
   /* TOC */
-  .toc {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 48px;
-  }
-  .toc-title {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--fg-muted);
-    margin-bottom: 12px;
-  }
-  .toc ol {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 6px;
-    font-size: 0.875rem;
-  }
-  .toc a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 500;
-  }
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 48px; }
+  .toc-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-muted); margin-bottom: 12px; }
+  .toc ol { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; font-size: 0.875rem; }
+  .toc a { color: var(--accent); text-decoration: none; font-weight: 500; }
   .toc a:hover { text-decoration: underline; }
 
-  /* Tags / Badges */
-  .tag {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    white-space: nowrap;
-  }
+  /* Tags */
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
   .tag-blue { background: var(--accent-light); color: var(--accent-fg); }
   .tag-green { background: var(--green-light); color: var(--green-fg); }
   .tag-amber { background: var(--amber-light); color: var(--amber-fg); }
@@ -247,171 +102,64 @@
   .tag-purple { background: var(--purple-light); color: var(--purple-fg); }
 
   /* Tables */
-  .table-wrap {
-    overflow-x: auto;
-    margin-bottom: 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.8125rem;
-    font-variant-numeric: tabular-nums;
-  }
+  .table-wrap { overflow-x: auto; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
   thead { background: var(--surface-alt); }
-  th {
-    text-align: left;
-    padding: 10px 14px;
-    font-weight: 700;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--fg-muted);
-    white-space: nowrap;
-    border-bottom: 1px solid var(--border);
-  }
-  td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
+  th { text-align: left; padding: 10px 14px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--fg-muted); white-space: nowrap; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
   tr:last-child td { border-bottom: none; }
   .col-name { font-weight: 500; font-family: var(--font-mono); font-size: 0.8125rem; }
   .col-type { font-family: var(--font-mono); font-size: 0.75rem; color: var(--purple); }
   .col-nullable { color: var(--fg-muted); font-size: 0.75rem; }
 
   /* Code */
-  code {
-    font-family: var(--font-mono);
-    font-size: 0.85em;
-    background: var(--surface-alt);
-    padding: 1px 5px;
-    border-radius: 4px;
-  }
-  pre {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    overflow-x: auto;
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    line-height: 1.6;
-    margin-bottom: 16px;
-  }
+  code { font-family: var(--font-mono); font-size: 0.85em; background: var(--surface-alt); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; font-family: var(--font-mono); font-size: 0.8125rem; line-height: 1.6; margin-bottom: 16px; }
 
-  /* API endpoint cards */
-  .api-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 16px;
-    overflow: hidden;
-  }
-  .api-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.875rem;
-  }
-  .method {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
+  /* API cards */
+  .api-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+  .api-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
+  .method { display: inline-block; padding: 2px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
   .method-get { background: var(--green-light); color: var(--green-fg); }
   .method-post { background: var(--accent-light); color: var(--accent-fg); }
   .method-put { background: var(--amber-light); color: var(--amber-fg); }
   .method-delete { background: var(--red-light); color: var(--red-fg); }
   .api-path { font-family: var(--font-mono); font-weight: 500; }
   .api-desc { color: var(--fg-muted); font-size: 0.8125rem; margin-left: auto; }
-  .api-body {
-    padding: 12px 16px;
-    font-size: 0.8125rem;
-  }
+  .api-body { padding: 12px 16px; font-size: 0.8125rem; }
   .api-body dt { font-weight: 500; margin-top: 8px; }
   .api-body dd { color: var(--fg-muted); margin-left: 0; }
-  .auth-badge {
-    display: inline-block;
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
+  .auth-badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
   .auth-required { background: var(--amber-light); color: var(--amber-fg); }
   .auth-none { background: var(--surface-alt); color: var(--fg-muted); }
 
-  /* Diagram / flow */
-  .arch-diagram {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 24px;
-    overflow-x: auto;
-  }
+  /* Diagram */
+  .arch-diagram { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; overflow-x: auto; }
   .arch-diagram svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
 
-  /* Screen list */
-  .screen-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-  .screen-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .screen-card h4 {
-    margin: 0;
-    font-size: 0.875rem;
-    font-weight: 700;
-    text-transform: none;
-    letter-spacing: normal;
-    color: var(--fg);
-  }
-  .screen-card p {
-    font-size: 0.8125rem;
-    color: var(--fg-muted);
-    margin: 0;
-    flex: 1;
-  }
-  .screen-card .screen-route {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--accent);
-  }
+  /* Screen cards */
+  .screen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .screen-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .screen-card h4 { margin: 0; font-size: 0.875rem; font-weight: 700; text-transform: none; letter-spacing: normal; color: var(--fg); display: flex; align-items: center; gap: 8px; }
+  .screen-card p { font-size: 0.8125rem; color: var(--fg-muted); margin: 0; flex: 1; }
+  .screen-card .screen-route { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); }
 
-  /* Utility */
+  /* Spec detail */
+  .spec-block { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .spec-block h4 { margin-top: 0; font-size: 0.875rem; font-weight: 700; color: var(--fg); text-transform: none; letter-spacing: normal; }
+  .spec-list { list-style: disc; padding-left: 1.5em; margin-bottom: 0; }
+  .spec-list li { margin-bottom: 4px; font-size: 0.8125rem; }
+
+  /* Note */
   ul, ol { padding-left: 1.5em; margin-bottom: 12px; }
   li { margin-bottom: 4px; }
-  .note {
-    background: var(--accent-light);
-    border-left: 3px solid var(--accent);
-    padding: 12px 16px;
-    border-radius: 0 8px 8px 0;
-    font-size: 0.875rem;
-    margin-bottom: 16px;
-  }
-  .note-warn {
-    background: var(--amber-light);
-    border-left-color: var(--amber);
-  }
+  .note { background: var(--accent-light); border-left: 3px solid var(--accent); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 0.875rem; margin-bottom: 16px; }
+  .note-warn { background: var(--amber-light); border-left-color: var(--amber); }
+
+  /* Gap table */
+  .gap-done { color: var(--green); font-weight: 500; }
+  .gap-partial { color: var(--amber); font-weight: 500; }
+  .gap-todo { color: var(--red); font-weight: 500; }
 
   @media (max-width: 600px) {
     .wrapper { padding-block: 32px 60px; }
@@ -428,11 +176,12 @@
 <div class="wrapper">
   <!-- Header -->
   <header class="doc-header">
-    <h1>資格管理ツール 設計書</h1>
+    <h1>資格勉強 進捗管理アプリ — 設計仕様書</h1>
     <dl class="doc-meta">
       <div class="pair"><dt>プロジェクト</dt><dd>sikaku_kanri</dd></div>
-      <div class="pair"><dt>バージョン</dt><dd>0.1.0</dd></div>
-      <div class="pair"><dt>最終更新</dt><dd>2026-11-02</dd></div>
+      <div class="pair"><dt>バージョン</dt><dd>0.2.0</dd></div>
+      <div class="pair"><dt>最終更新</dt><dd>2026-11-03</dd></div>
+      <div class="pair"><dt>目標完成</dt><dd>2027年3月</dd></div>
       <div class="pair"><dt>ステータス</dt><dd><span class="tag tag-amber">開発中</span></dd></div>
     </dl>
   </header>
@@ -443,15 +192,17 @@
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="var(--accent)" stroke-width="2"/><path d="M5 9l2.5 2.5L13 6" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       開発進捗
     </h2>
-    <div class="progress-bar-track"><div class="progress-bar-fill" style="width: 38%"></div></div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width: 55%"></div></div>
     <ul class="progress-steps">
       <li class="step-done"><span class="check check-done"></span> Docker環境構築</li>
       <li class="step-done"><span class="check check-done"></span> DBマイグレーション</li>
       <li class="step-done"><span class="check check-done"></span> 認証API（Sanctum）</li>
       <li class="step-done"><span class="check check-done"></span> 資格CRUD API</li>
       <li class="step-done"><span class="check check-done"></span> 学習記録API</li>
-      <li class="step-pending"><span class="check check-pending"></span> フロントエンド実装</li>
-      <li class="step-pending"><span class="check check-pending"></span> ダッシュボード</li>
+      <li class="step-wip"><span class="check check-wip"></span> フロントエンド（5/9画面）</li>
+      <li class="step-pending"><span class="check check-pending"></span> カレンダー / ヘルプ画面</li>
+      <li class="step-pending"><span class="check check-pending"></span> ダッシュボードAPI / カレンダーAPI</li>
+      <li class="step-pending"><span class="check check-pending"></span> メール暗号化（セキュリティ）</li>
       <li class="step-pending"><span class="check check-pending"></span> テスト・デプロイ</li>
     </ul>
   </div>
@@ -460,32 +211,32 @@
   <nav class="toc">
     <div class="toc-title">目次</div>
     <ol>
-      <li><a href="#overview">概要・目的</a></li>
-      <li><a href="#tech">技術スタック</a></li>
-      <li><a href="#arch">システム構成</a></li>
-      <li><a href="#db">データベース設計</a></li>
-      <li><a href="#api">API設計</a></li>
-      <li><a href="#screens">画面設計</a></li>
-      <li><a href="#auth">認証・セキュリティ</a></li>
-      <li><a href="#schedule">開発スケジュール</a></li>
+      <li><a href="#overview">1. 概要・目的</a></li>
+      <li><a href="#tech">2. 技術スタック</a></li>
+      <li><a href="#arch">3. システム構成</a></li>
+      <li><a href="#screens">4. 画面仕様（9画面）</a></li>
+      <li><a href="#db">5. データベース設計</a></li>
+      <li><a href="#api">6. API設計</a></li>
+      <li><a href="#auth">7. 認証・セキュリティ</a></li>
+      <li><a href="#gap">8. 実装状況・差分一覧</a></li>
+      <li><a href="#schedule">9. 開発スケジュール</a></li>
     </ol>
   </nav>
 
   <!-- 1. Overview -->
   <section id="overview">
     <h2>1. 概要・目的</h2>
-    <p>資格取得に向けた学習を管理するWebアプリケーション。取得したい資格の登録、分野別の学習記録、進捗の可視化を通じて、計画的な資格取得を支援する。</p>
+    <p>資格取得に向けた学習を管理するWebアプリケーション。自分自身が使うツールとして開発し、転職活動のポートフォリオとしても活用する。AWS CLF-C02の勉強と並行して進める。</p>
 
     <h3>主な機能</h3>
     <ul>
-      <li><strong>資格管理</strong> — 目標資格の登録・編集・削除。試験日・ステータス（学習中/合格/不合格）を管理</li>
-      <li><strong>分野管理</strong> — 資格ごとに学習分野（カテゴリ）を設定。分野別の進捗を把握</li>
-      <li><strong>学習記録</strong> — 日ごとの学習内容・時間を記録。分野と紐づけて弱点を特定</li>
-      <li><strong>ダッシュボード</strong> — 学習時間の推移、分野別の学習割合、試験日までの残日数を表示</li>
+      <li><strong>資格管理</strong> — 目標資格の登録・編集・削除。試験日・ステータス（勉強中/合格/不合格）・メモを管理</li>
+      <li><strong>分野管理</strong> — 資格ごとに学習分野（カテゴリ）を自由に追加・編集・削除</li>
+      <li><strong>勉強記録</strong> — 日ごとの学習内容・時間を記録。資格・分野と紐づけ。フィルタ機能あり</li>
+      <li><strong>ダッシュボード</strong> — 登録資格一覧＋各資格の累計勉強時間を表示</li>
+      <li><strong>カレンダー</strong> — 草表示（GitHub風）で勉強日を可視化。日付クリックで記録表示</li>
+      <li><strong>ヘルプ</strong> — アプリの取扱説明書。目次＋キーワード検索つき</li>
     </ul>
-
-    <h3>ターゲットユーザー</h3>
-    <p>IT系資格（基本情報技術者、応用情報技術者、AWS認定など）の取得を目指す個人。複数資格を並行で勉強するケースにも対応する。</p>
   </section>
 
   <!-- 2. Tech Stack -->
@@ -497,12 +248,14 @@
         <tbody>
           <tr><td>コンテナ</td><td>Docker Compose</td><td>—</td><td>開発環境の統一</td></tr>
           <tr><td>Webサーバー</td><td>nginx</td><td>1.28</td><td>リバースプロキシ（/api→Laravel、他→Next.js）</td></tr>
-          <tr><td>バックエンド</td><td>Laravel</td><td>12.x</td><td>REST API</td></tr>
+          <tr><td>バックエンド</td><td>Laravel (PHP)</td><td>12.x / PHP 8.4</td><td>REST API</td></tr>
           <tr><td>認証</td><td>Laravel Sanctum</td><td>—</td><td>トークンベース認証</td></tr>
-          <tr><td>フロントエンド</td><td>Next.js</td><td>16.4</td><td>SPA / SSR</td></tr>
+          <tr><td>フロントエンド</td><td>Next.js</td><td>16.4</td><td>SPA</td></tr>
           <tr><td>UIライブラリ</td><td>React</td><td>19.3</td><td>コンポーネント構築</td></tr>
+          <tr><td>UIコンポーネント</td><td>shadcn/ui パターン</td><td>—</td><td>CVA + Tailwind ベースの自作UIコンポーネント</td></tr>
           <tr><td>スタイル</td><td>Tailwind CSS</td><td>4.x</td><td>ユーティリティCSS</td></tr>
-          <tr><td>言語</td><td>TypeScript</td><td>5.x</td><td>フロントエンド型安全</td></tr>
+          <tr><td>アイコン</td><td>Lucide React</td><td>0.475</td><td>アイコン</td></tr>
+          <tr><td>言語</td><td>TypeScript</td><td>5.x</td><td>型安全</td></tr>
           <tr><td>データベース</td><td>PostgreSQL</td><td>18</td><td>データ永続化</td></tr>
         </tbody>
       </table>
@@ -514,60 +267,162 @@
     <h2>3. システム構成</h2>
     <div class="arch-diagram">
       <svg viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg">
-        <!-- Browser -->
         <rect x="260" y="10" width="200" height="50" rx="8" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1.5"/>
         <text x="360" y="40" text-anchor="middle" font-family="var(--font-body)" font-size="13" font-weight="700" fill="var(--accent-fg)">ブラウザ</text>
-
-        <!-- Arrow -->
         <line x1="360" y1="60" x2="360" y2="90" stroke="var(--fg-muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
         <text x="375" y="80" font-family="var(--font-mono)" font-size="10" fill="var(--fg-muted)">:8080</text>
-
-        <!-- Nginx -->
         <rect x="220" y="90" width="280" height="50" rx="8" fill="var(--green-light)" stroke="var(--green)" stroke-width="1.5"/>
         <text x="360" y="120" text-anchor="middle" font-family="var(--font-body)" font-size="13" font-weight="700" fill="var(--green-fg)">nginx（リバースプロキシ）</text>
-
-        <!-- Arrows from nginx -->
         <line x1="300" y1="140" x2="180" y2="180" stroke="var(--fg-muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
         <text x="218" y="158" font-family="var(--font-mono)" font-size="10" fill="var(--fg-muted)">/api/*</text>
         <line x1="420" y1="140" x2="540" y2="180" stroke="var(--fg-muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
         <text x="488" y="158" font-family="var(--font-mono)" font-size="10" fill="var(--fg-muted)">/* (その他)</text>
-
-        <!-- Laravel -->
         <rect x="60" y="180" width="240" height="50" rx="8" fill="var(--red-light)" stroke="var(--red)" stroke-width="1.5"/>
         <text x="180" y="210" text-anchor="middle" font-family="var(--font-body)" font-size="13" font-weight="700" fill="var(--red-fg)">Laravel（API）</text>
-
-        <!-- Next.js -->
         <rect x="420" y="180" width="240" height="50" rx="8" fill="var(--purple-light)" stroke="var(--purple)" stroke-width="1.5"/>
         <text x="540" y="210" text-anchor="middle" font-family="var(--font-body)" font-size="13" font-weight="700" fill="var(--purple-fg)">Next.js（フロントエンド）</text>
-
-        <!-- Arrow from Laravel to DB -->
         <line x1="180" y1="230" x2="180" y2="270" stroke="var(--fg-muted)" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-        <!-- PostgreSQL -->
         <rect x="80" y="270" width="200" height="50" rx="8" fill="var(--amber-light)" stroke="var(--amber)" stroke-width="1.5"/>
         <text x="180" y="300" text-anchor="middle" font-family="var(--font-body)" font-size="13" font-weight="700" fill="var(--amber-fg)">PostgreSQL</text>
-
-        <!-- Arrowhead marker -->
-        <defs>
-          <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-            <path d="M0,0 L8,3 L0,6 Z" fill="var(--fg-muted)"/>
-          </marker>
-        </defs>
+        <defs><marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="var(--fg-muted)"/></marker></defs>
       </svg>
     </div>
     <div class="note">
-      <strong>nginx ルーティング:</strong> <code>/api/*</code> へのリクエストはLaravelコンテナへ、それ以外はNext.jsコンテナへプロキシされる。全体を <code>localhost:8080</code> で統一的にアクセス可能。
+      <strong>nginx ルーティング:</strong> <code>/api/*</code> へのリクエストはLaravelコンテナへ、それ以外はNext.jsコンテナへプロキシ。全体を <code>localhost:8080</code> で統一アクセス。
     </div>
   </section>
 
-  <!-- 4. Database -->
-  <section id="db">
-    <h2>4. データベース設計</h2>
+  <!-- 4. Screens -->
+  <section id="screens">
+    <h2>4. 画面仕様（9画面）</h2>
 
-    <h3>ER図（論理構成）</h3>
+    <h3>サイドメニュー構成</h3>
+    <ul>
+      <li>ダッシュボード</li>
+      <li>資格管理</li>
+      <li>勉強記録</li>
+      <li>カレンダー</li>
+      <li>ヘルプ</li>
+    </ul>
+
+    <h3>画面一覧</h3>
+    <div class="screen-grid">
+      <div class="screen-card">
+        <h4>1. ログイン <span class="tag tag-green">実装済</span></h4>
+        <p>メールアドレスとパスワードでログイン。未登録の場合は登録画面へ誘導。</p>
+        <span class="screen-route">/login</span>
+      </div>
+      <div class="screen-card">
+        <h4>2. ユーザー登録 <span class="tag tag-green">実装済</span></h4>
+        <p>名前・メール・パスワードを入力して新規登録。登録後は自動ログインしダッシュボードへ遷移。</p>
+        <span class="screen-route">/register</span>
+      </div>
+      <div class="screen-card">
+        <h4>3. ダッシュボード <span class="tag tag-amber">一部実装</span></h4>
+        <p>登録資格の一覧＋各資格の累計勉強時間を表示。その他の機能はサイドメニューから遷移。</p>
+        <span class="screen-route">/dashboard</span>
+      </div>
+      <div class="screen-card">
+        <h4>4. 資格一覧 <span class="tag tag-green">実装済</span></h4>
+        <p>登録した資格のカード表示。ステータスバッジ、試験日表示。新規追加ボタン。</p>
+        <span class="screen-route">/certifications</span>
+      </div>
+      <div class="screen-card">
+        <h4>5. 資格登録/編集 <span class="tag tag-amber">一部実装</span></h4>
+        <p>資格名・目標日（試験日）・メモ（任意）・ステータスを入力。分野の追加・編集・削除が可能。</p>
+        <span class="screen-route">/certifications（インライン）</span>
+      </div>
+      <div class="screen-card">
+        <h4>6. 勉強記録一覧 <span class="tag tag-amber">一部実装</span></h4>
+        <p>日付降順で学習記録をテーブル表示。資格・日付範囲・分野でのフィルタ機能。</p>
+        <span class="screen-route">/study-logs</span>
+      </div>
+      <div class="screen-card">
+        <h4>7. 勉強記録登録/編集 <span class="tag tag-amber">一部実装</span></h4>
+        <p>日付・勉強時間・やった内容を入力。資格との紐付け、分野選択（カスケード）。</p>
+        <span class="screen-route">/study-logs（インライン）</span>
+      </div>
+      <div class="screen-card">
+        <h4>8. カレンダー <span class="tag tag-red">未実装</span></h4>
+        <p>草表示（勉強した日に色がつく）。日付クリックでその日の勉強記録を表示。</p>
+        <span class="screen-route">/calendar</span>
+      </div>
+      <div class="screen-card">
+        <h4>9. ヘルプ <span class="tag tag-red">未実装</span></h4>
+        <p>1ページ構成の取扱説明書。左サイドに目次、上部にキーワード検索。</p>
+        <span class="screen-route">/help</span>
+      </div>
+    </div>
+
+    <h3>各画面の詳細仕様</h3>
+
+    <div class="spec-block">
+      <h4>3. ダッシュボード</h4>
+      <ul class="spec-list">
+        <li><strong>仕様:</strong> 登録資格の一覧＋各資格の累計勉強時間を表示</li>
+        <li><strong>現状:</strong> 統計カード（登録資格数、学習記録数、今月の学習時間、学習継続日数）と最近の学習記録リストを表示</li>
+        <li class="gap-todo"><strong>不足:</strong> 各資格ごとの累計勉強時間の一覧表示。専用APIエンドポイント（GET /api/dashboard）</li>
+      </ul>
+    </div>
+
+    <div class="spec-block">
+      <h4>5. 資格登録/編集</h4>
+      <ul class="spec-list">
+        <li><strong>入力項目:</strong> 資格名、目標日（試験日）、メモ（任意）、ステータス</li>
+        <li><strong>ステータス選択肢:</strong> 勉強中 / 合格 / 不合格</li>
+        <li><strong>分野管理:</strong> 資格ごとに分野を自由に追加・編集・削除。資格登録時でも登録後でも設定可能</li>
+        <li class="gap-todo"><strong>不足:</strong> メモ入力欄がフォームにない。分野の「編集」機能がない（追加・削除のみ）</li>
+      </ul>
+    </div>
+
+    <div class="spec-block">
+      <h4>6. 勉強記録一覧</h4>
+      <ul class="spec-list">
+        <li><strong>表示:</strong> 日付・資格・分野・時間・メモ・操作（削除）をテーブル表示</li>
+        <li><strong>フィルタ:</strong> 資格 / 日付範囲 / 分野 で絞り込み</li>
+        <li class="gap-todo"><strong>不足:</strong> フィルタUI未実装（APIはフィルタ対応済み）</li>
+      </ul>
+    </div>
+
+    <div class="spec-block">
+      <h4>7. 勉強記録登録/編集</h4>
+      <ul class="spec-list">
+        <li><strong>入力項目:</strong> 日付、勉強時間（分）、やった内容（自由入力・任意）</li>
+        <li><strong>資格との紐付け:</strong> どの資格の勉強か選択（必須）</li>
+        <li><strong>分野選択:</strong> 選択した資格の分野から選ぶ（任意・カスケード選択）</li>
+        <li class="gap-todo"><strong>不足:</strong> 編集機能が未実装（追加・削除のみ）</li>
+      </ul>
+    </div>
+
+    <div class="spec-block">
+      <h4>8. カレンダー</h4>
+      <ul class="spec-list">
+        <li><strong>草表示:</strong> GitHub風の草グラフ。勉強した日に色がつく（勉強時間で濃淡）</li>
+        <li><strong>日付クリック:</strong> その日の勉強記録を一覧表示</li>
+        <li><strong>API:</strong> GET /api/calendar（月ごとの勉強日データ）、GET /api/calendar/{date}（特定日の記録）</li>
+        <li class="gap-todo"><strong>状態:</strong> 画面・API ともに未実装</li>
+      </ul>
+    </div>
+
+    <div class="spec-block">
+      <h4>9. ヘルプ</h4>
+      <ul class="spec-list">
+        <li><strong>構成:</strong> 1ページ構成の取扱説明書</li>
+        <li><strong>左サイド:</strong> 目次（クリックで該当セクションへスクロール）</li>
+        <li><strong>上部:</strong> キーワード検索（該当セクションを絞り込み表示）</li>
+        <li><strong>内容:</strong> アプリ概要 / 資格の登録方法 / 分野の設定 / 勉強記録の付け方 / ダッシュボードの見方 / カレンダーの使い方 / FAQ</li>
+        <li class="gap-todo"><strong>状態:</strong> 未実装</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. Database -->
+  <section id="db">
+    <h2>5. データベース設計</h2>
+
+    <h3>ER図</h3>
     <div class="arch-diagram">
       <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg">
-        <!-- Users -->
         <rect x="20" y="30" width="200" height="160" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
         <rect x="20" y="30" width="200" height="32" rx="6" fill="var(--accent-light)"/>
         <rect x="20" y="56" width="200" height="6" fill="var(--surface)"/>
@@ -579,7 +434,6 @@
         <text x="32" y="144" font-family="var(--font-mono)" font-size="10" fill="var(--fg)">password</text>
         <text x="32" y="160" font-family="var(--font-mono)" font-size="10" fill="var(--fg-muted)">timestamps</text>
 
-        <!-- Certifications -->
         <rect x="300" y="30" width="200" height="176" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
         <rect x="300" y="30" width="200" height="32" rx="6" fill="var(--green-light)"/>
         <rect x="300" y="56" width="200" height="6" fill="var(--surface)"/>
@@ -592,7 +446,6 @@
         <text x="312" y="160" font-family="var(--font-mono)" font-size="10" fill="var(--fg)">memo</text>
         <text x="312" y="176" font-family="var(--font-mono)" font-size="10" fill="var(--fg-muted)">timestamps</text>
 
-        <!-- Categories -->
         <rect x="480" y="260" width="200" height="110" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
         <rect x="480" y="260" width="200" height="32" rx="6" fill="var(--purple-light)"/>
         <rect x="480" y="286" width="200" height="6" fill="var(--surface)"/>
@@ -602,7 +455,6 @@
         <text x="492" y="342" font-family="var(--font-mono)" font-size="10" fill="var(--fg)">name</text>
         <text x="492" y="358" font-family="var(--font-mono)" font-size="10" fill="var(--fg-muted)">timestamps</text>
 
-        <!-- Study Logs -->
         <rect x="60" y="260" width="220" height="110" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
         <rect x="60" y="260" width="220" height="32" rx="6" fill="var(--amber-light)"/>
         <rect x="60" y="286" width="220" height="6" fill="var(--surface)"/>
@@ -612,19 +464,14 @@
         <text x="72" y="342" font-family="var(--font-mono)" font-size="10" fill="var(--fg)">studied_on, duration_minutes</text>
         <text x="72" y="358" font-family="var(--font-mono)" font-size="10" fill="var(--fg)">content, timestamps</text>
 
-        <!-- Relations -->
         <line x1="220" y1="96" x2="300" y2="96" stroke="var(--fg-muted)" stroke-width="1.5" stroke-dasharray="4 3"/>
         <text x="260" y="90" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--fg-muted)">1:N</text>
-
         <line x1="400" y1="206" x2="580" y2="260" stroke="var(--fg-muted)" stroke-width="1.5" stroke-dasharray="4 3"/>
         <text x="510" y="230" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--fg-muted)">1:N</text>
-
         <line x1="400" y1="206" x2="170" y2="260" stroke="var(--fg-muted)" stroke-width="1.5" stroke-dasharray="4 3"/>
         <text x="270" y="230" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--fg-muted)">1:N</text>
-
         <line x1="120" y1="190" x2="120" y2="260" stroke="var(--fg-muted)" stroke-width="1" stroke-dasharray="4 3"/>
         <text x="115" y="228" text-anchor="end" font-family="var(--font-mono)" font-size="9" fill="var(--fg-muted)">1:N</text>
-
         <line x1="280" y1="330" x2="480" y2="315" stroke="var(--fg-muted)" stroke-width="1" stroke-dasharray="4 3"/>
         <text x="380" y="316" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--fg-muted)">N:1</text>
       </svg>
@@ -635,16 +482,18 @@
       <table>
         <thead><tr><th>カラム</th><th>型</th><th>制約</th><th>説明</th></tr></thead>
         <tbody>
-          <tr><td class="col-name">id</td><td class="col-type">bigint</td><td>PK, AUTO</td><td>ユーザーID</td></tr>
-          <tr><td class="col-name">name</td><td class="col-type">varchar(255)</td><td>NOT NULL</td><td>表示名</td></tr>
-          <tr><td class="col-name">email_encrypted</td><td class="col-type">text</td><td>NOT NULL</td><td>暗号化メールアドレス（AES-256-CBC）</td></tr>
-          <tr><td class="col-name">email_hash</td><td class="col-type">varchar(255)</td><td>UNIQUE</td><td>検索用SHA-256ハッシュ</td></tr>
-          <tr><td class="col-name">password</td><td class="col-type">varchar(255)</td><td>NOT NULL</td><td>bcryptハッシュ</td></tr>
-          <tr><td class="col-name">remember_token</td><td class="col-type">varchar(100)</td><td class="col-nullable">NULLABLE</td><td>リメンバートークン</td></tr>
-          <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-nullable">NULLABLE</td><td>作成日時</td></tr>
-          <tr><td class="col-name">updated_at</td><td class="col-type">timestamp</td><td class="col-nullable">NULLABLE</td><td>更新日時</td></tr>
+          <tr><td class="col-name">id</td><td class="col-type">BIGSERIAL</td><td>PK</td><td>ユーザーID</td></tr>
+          <tr><td class="col-name">name</td><td class="col-type">VARCHAR(255)</td><td>NOT NULL</td><td>名前</td></tr>
+          <tr><td class="col-name">email_encrypted</td><td class="col-type">TEXT</td><td>NOT NULL</td><td>暗号化メールアドレス（表示用・復号可能）</td></tr>
+          <tr><td class="col-name">email_hash</td><td class="col-type">VARCHAR(255)</td><td>UNIQUE, NOT NULL</td><td>検索用ハッシュ（ログイン時に使用）</td></tr>
+          <tr><td class="col-name">password</td><td class="col-type">VARCHAR(255)</td><td>NOT NULL</td><td>bcryptハッシュ</td></tr>
+          <tr><td class="col-name">created_at</td><td class="col-type">TIMESTAMP</td><td>NOT NULL</td><td></td></tr>
+          <tr><td class="col-name">updated_at</td><td class="col-type">TIMESTAMP</td><td>NOT NULL</td><td></td></tr>
         </tbody>
       </table>
+    </div>
+    <div class="note note-warn">
+      <strong>セキュリティ:</strong> メールアドレスはブラインドインデックス方式で暗号化。<code>email_hash</code>で検索、<code>email_encrypted</code>を復号して表示。現在は平文emailカラムで仮実装中。
     </div>
 
     <h3>certifications テーブル</h3>
@@ -652,14 +501,14 @@
       <table>
         <thead><tr><th>カラム</th><th>型</th><th>制約</th><th>説明</th></tr></thead>
         <tbody>
-          <tr><td class="col-name">id</td><td class="col-type">bigint</td><td>PK, AUTO</td><td>資格ID</td></tr>
-          <tr><td class="col-name">user_id</td><td class="col-type">bigint</td><td>FK→users, CASCADE</td><td>所有ユーザー</td></tr>
-          <tr><td class="col-name">name</td><td class="col-type">varchar(255)</td><td>NOT NULL</td><td>資格名</td></tr>
-          <tr><td class="col-name">exam_date</td><td class="col-type">date</td><td class="col-nullable">NULLABLE</td><td>試験予定日</td></tr>
-          <tr><td class="col-name">status</td><td class="col-type">varchar(20)</td><td>DEFAULT 'studying'</td><td>studying / passed / failed</td></tr>
-          <tr><td class="col-name">memo</td><td class="col-type">text</td><td class="col-nullable">NULLABLE</td><td>メモ</td></tr>
-          <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-nullable">NULLABLE</td><td>作成日時</td></tr>
-          <tr><td class="col-name">updated_at</td><td class="col-type">timestamp</td><td class="col-nullable">NULLABLE</td><td>更新日時</td></tr>
+          <tr><td class="col-name">id</td><td class="col-type">BIGSERIAL</td><td>PK</td><td></td></tr>
+          <tr><td class="col-name">user_id</td><td class="col-type">BIGINT</td><td>FK→users</td><td></td></tr>
+          <tr><td class="col-name">name</td><td class="col-type">VARCHAR(255)</td><td>NOT NULL</td><td>資格名</td></tr>
+          <tr><td class="col-name">exam_date</td><td class="col-type">DATE</td><td>NULLABLE</td><td>目標日（試験日）</td></tr>
+          <tr><td class="col-name">status</td><td class="col-type">VARCHAR(20)</td><td>NOT NULL</td><td>studying / passed / failed</td></tr>
+          <tr><td class="col-name">memo</td><td class="col-type">TEXT</td><td>NULLABLE</td><td>メモ</td></tr>
+          <tr><td class="col-name">created_at</td><td class="col-type">TIMESTAMP</td><td></td><td></td></tr>
+          <tr><td class="col-name">updated_at</td><td class="col-type">TIMESTAMP</td><td></td><td></td></tr>
         </tbody>
       </table>
     </div>
@@ -669,11 +518,11 @@
       <table>
         <thead><tr><th>カラム</th><th>型</th><th>制約</th><th>説明</th></tr></thead>
         <tbody>
-          <tr><td class="col-name">id</td><td class="col-type">bigint</td><td>PK, AUTO</td><td>カテゴリID</td></tr>
-          <tr><td class="col-name">certification_id</td><td class="col-type">bigint</td><td>FK→certifications, CASCADE</td><td>所属資格</td></tr>
-          <tr><td class="col-name">name</td><td class="col-type">varchar(255)</td><td>NOT NULL</td><td>分野名（例：ネットワーク）</td></tr>
-          <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-nullable">NULLABLE</td><td>作成日時</td></tr>
-          <tr><td class="col-name">updated_at</td><td class="col-type">timestamp</td><td class="col-nullable">NULLABLE</td><td>更新日時</td></tr>
+          <tr><td class="col-name">id</td><td class="col-type">BIGSERIAL</td><td>PK</td><td></td></tr>
+          <tr><td class="col-name">certification_id</td><td class="col-type">BIGINT</td><td>FK→certifications</td><td>所属資格</td></tr>
+          <tr><td class="col-name">name</td><td class="col-type">VARCHAR(255)</td><td>NOT NULL</td><td>分野名（例：ネットワーク）</td></tr>
+          <tr><td class="col-name">created_at</td><td class="col-type">TIMESTAMP</td><td></td><td></td></tr>
+          <tr><td class="col-name">updated_at</td><td class="col-type">TIMESTAMP</td><td></td><td></td></tr>
         </tbody>
       </table>
     </div>
@@ -683,337 +532,115 @@
       <table>
         <thead><tr><th>カラム</th><th>型</th><th>制約</th><th>説明</th></tr></thead>
         <tbody>
-          <tr><td class="col-name">id</td><td class="col-type">bigint</td><td>PK, AUTO</td><td>ログID</td></tr>
-          <tr><td class="col-name">user_id</td><td class="col-type">bigint</td><td>FK→users, CASCADE</td><td>記録ユーザー</td></tr>
-          <tr><td class="col-name">certification_id</td><td class="col-type">bigint</td><td>FK→certifications, CASCADE</td><td>対象資格</td></tr>
-          <tr><td class="col-name">category_id</td><td class="col-type">bigint</td><td>FK→categories, NULL ON DELETE</td><td>学習分野（任意）</td></tr>
-          <tr><td class="col-name">studied_on</td><td class="col-type">date</td><td>NOT NULL</td><td>学習日</td></tr>
-          <tr><td class="col-name">duration_minutes</td><td class="col-type">integer</td><td>NOT NULL</td><td>学習時間（分）</td></tr>
-          <tr><td class="col-name">content</td><td class="col-type">text</td><td class="col-nullable">NULLABLE</td><td>学習内容メモ</td></tr>
-          <tr><td class="col-name">created_at</td><td class="col-type">timestamp</td><td class="col-nullable">NULLABLE</td><td>作成日時</td></tr>
-          <tr><td class="col-name">updated_at</td><td class="col-type">timestamp</td><td class="col-nullable">NULLABLE</td><td>更新日時</td></tr>
+          <tr><td class="col-name">id</td><td class="col-type">BIGSERIAL</td><td>PK</td><td></td></tr>
+          <tr><td class="col-name">user_id</td><td class="col-type">BIGINT</td><td>FK→users</td><td></td></tr>
+          <tr><td class="col-name">certification_id</td><td class="col-type">BIGINT</td><td>FK→certifications</td><td>対象資格</td></tr>
+          <tr><td class="col-name">category_id</td><td class="col-type">BIGINT</td><td>FK→categories, NULLABLE</td><td>分野（任意）</td></tr>
+          <tr><td class="col-name">studied_on</td><td class="col-type">DATE</td><td>NOT NULL</td><td>勉強した日付</td></tr>
+          <tr><td class="col-name">duration_minutes</td><td class="col-type">INTEGER</td><td>NOT NULL</td><td>勉強時間（分単位）</td></tr>
+          <tr><td class="col-name">content</td><td class="col-type">TEXT</td><td>NULLABLE</td><td>やった内容</td></tr>
+          <tr><td class="col-name">created_at</td><td class="col-type">TIMESTAMP</td><td></td><td></td></tr>
+          <tr><td class="col-name">updated_at</td><td class="col-type">TIMESTAMP</td><td></td><td></td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <!-- 5. API -->
+  <!-- 6. API -->
   <section id="api">
-    <h2>5. API設計</h2>
+    <h2>6. API設計</h2>
     <p>全APIは <code>/api</code> プレフィックスで統一。レスポンス形式はJSON。</p>
 
-    <h3>認証 <span class="tag tag-green">実装済み</span></h3>
-
+    <h3>認証 <span class="tag tag-green">実装済</span></h3>
     <div class="api-card">
-      <div class="api-header">
-        <span class="method method-post">POST</span>
-        <span class="api-path">/api/register</span>
-        <span class="auth-badge auth-none">認証不要</span>
-      </div>
+      <div class="api-header"><span class="method method-post">POST</span><span class="api-path">/api/register</span><span class="auth-badge auth-none">認証不要</span></div>
+      <div class="api-body"><dt>リクエスト</dt><dd><code>name</code>, <code>email</code>, <code>password</code>, <code>password_confirmation</code></dd><dt>レスポンス</dt><dd>201: <code>{ user, token }</code></dd></div>
+    </div>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-post">POST</span><span class="api-path">/api/login</span><span class="auth-badge auth-none">認証不要</span></div>
+      <div class="api-body"><dt>リクエスト</dt><dd><code>email</code>, <code>password</code></dd><dt>レスポンス</dt><dd>200: <code>{ user, token }</code> / 401: 認証失敗</dd></div>
+    </div>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-post">POST</span><span class="api-path">/api/logout</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>レスポンス</dt><dd>200: <code>{ message }</code></dd></div>
+    </div>
+
+    <h3>資格管理 <span class="tag tag-green">実装済</span></h3>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-get">GET</span><span class="api-path">/api/certifications</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>説明</dt><dd>資格一覧（累計勉強時間つき）</dd><dt>クエリ</dt><dd><code>status</code> でフィルタ可能</dd><dt>レスポンス</dt><dd>200: <code>{ data: Certification[] }</code></dd></div>
+    </div>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-post">POST</span><span class="api-path">/api/certifications</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>リクエスト</dt><dd><code>name</code>(必須), <code>exam_date</code>, <code>status</code>, <code>memo</code></dd><dt>レスポンス</dt><dd>201: <code>{ data: Certification }</code></dd></div>
+    </div>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-get">GET</span><span class="api-path">/api/certifications/{id}</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>レスポンス</dt><dd>200: <code>{ data: Certification }</code></dd></div>
+    </div>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-put">PUT</span><span class="api-path">/api/certifications/{id}</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>リクエスト</dt><dd><code>name</code>, <code>exam_date</code>, <code>status</code>, <code>memo</code>（部分更新可）</dd></div>
+    </div>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-delete">DELETE</span><span class="api-path">/api/certifications/{id}</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>レスポンス</dt><dd>204 No Content（関連する分野・記録も削除）</dd></div>
+    </div>
+
+    <h3>分野（カテゴリ） <span class="tag tag-green">実装済</span></h3>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-get">GET</span><span class="api-path">/api/certifications/{id}/categories</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>説明</dt><dd>資格に紐づく分野一覧</dd></div>
+    </div>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-post">POST</span><span class="api-path">/api/certifications/{id}/categories</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>リクエスト</dt><dd><code>name</code>（必須）</dd></div>
+    </div>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-put">PUT</span><span class="api-path">/api/categories/{id}</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>リクエスト</dt><dd><code>name</code>（必須）</dd></div>
+    </div>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-delete">DELETE</span><span class="api-path">/api/categories/{id}</span><span class="auth-badge auth-required">要認証</span></div>
+    </div>
+
+    <h3>勉強記録 <span class="tag tag-green">実装済</span></h3>
+    <div class="api-card">
+      <div class="api-header"><span class="method method-get">GET</span><span class="api-path">/api/study-logs</span><span class="auth-badge auth-required">要認証</span></div>
       <div class="api-body">
-        <dt>リクエスト</dt>
-        <dd><code>name</code>, <code>email</code>, <code>password</code>, <code>password_confirmation</code></dd>
-        <dt>レスポンス</dt>
-        <dd>201: <code>{ user, token }</code> / 422: バリデーションエラー</dd>
+        <dt>説明</dt><dd>学習記録一覧（ページネーション対応）</dd>
+        <dt>フィルタ</dt><dd><code>certification_id</code>, <code>category_id</code>, <code>from</code>(開始日), <code>to</code>(終了日)</dd>
       </div>
     </div>
-
     <div class="api-card">
-      <div class="api-header">
-        <span class="method method-post">POST</span>
-        <span class="api-path">/api/login</span>
-        <span class="auth-badge auth-none">認証不要</span>
-      </div>
-      <div class="api-body">
-        <dt>リクエスト</dt>
-        <dd><code>email</code>, <code>password</code></dd>
-        <dt>レスポンス</dt>
-        <dd>200: <code>{ user, token }</code> / 401: 認証失敗</dd>
-      </div>
+      <div class="api-header"><span class="method method-post">POST</span><span class="api-path">/api/study-logs</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>リクエスト</dt><dd><code>certification_id</code>(必須), <code>category_id</code>, <code>studied_on</code>(必須), <code>duration_minutes</code>(必須), <code>content</code></dd></div>
     </div>
-
     <div class="api-card">
-      <div class="api-header">
-        <span class="method method-post">POST</span>
-        <span class="api-path">/api/logout</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>レスポンス</dt>
-        <dd>200: <code>{ message: "ログアウトしました。" }</code></dd>
-      </div>
+      <div class="api-header"><span class="method method-get">GET</span><span class="api-path">/api/study-logs/{id}</span><span class="auth-badge auth-required">要認証</span></div>
     </div>
-
-    <h3>資格管理 <span class="tag tag-green">実装済み</span></h3>
-
     <div class="api-card">
-      <div class="api-header">
-        <span class="method method-get">GET</span>
-        <span class="api-path">/api/certifications</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>説明</dt><dd>ログインユーザーの資格一覧を取得</dd>
-        <dt>クエリ</dt><dd><code>status</code>（任意）でフィルタ可能</dd>
-        <dt>レスポンス</dt><dd>200: <code>{ data: Certification[] }</code></dd>
-      </div>
+      <div class="api-header"><span class="method method-put">PUT</span><span class="api-path">/api/study-logs/{id}</span><span class="auth-badge auth-required">要認証</span></div>
     </div>
-
     <div class="api-card">
-      <div class="api-header">
-        <span class="method method-post">POST</span>
-        <span class="api-path">/api/certifications</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>リクエスト</dt><dd><code>name</code>(必須), <code>exam_date</code>, <code>status</code>, <code>memo</code></dd>
-        <dt>レスポンス</dt><dd>201: <code>{ data: Certification }</code></dd>
-      </div>
+      <div class="api-header"><span class="method method-delete">DELETE</span><span class="api-path">/api/study-logs/{id}</span><span class="auth-badge auth-required">要認証</span></div>
     </div>
 
+    <h3>ダッシュボード <span class="tag tag-red">未実装</span></h3>
     <div class="api-card">
-      <div class="api-header">
-        <span class="method method-put">PUT</span>
-        <span class="api-path">/api/certifications/{id}</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>リクエスト</dt><dd><code>name</code>, <code>exam_date</code>, <code>status</code>, <code>memo</code>（部分更新可）</dd>
-        <dt>レスポンス</dt><dd>200: <code>{ data: Certification }</code></dd>
-      </div>
+      <div class="api-header"><span class="method method-get">GET</span><span class="api-path">/api/dashboard</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>説明</dt><dd>資格一覧＋各資格の累計勉強時間</dd></div>
     </div>
 
+    <h3>カレンダー <span class="tag tag-red">未実装</span></h3>
     <div class="api-card">
-      <div class="api-header">
-        <span class="method method-delete">DELETE</span>
-        <span class="api-path">/api/certifications/{id}</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>レスポンス</dt><dd>204: No Content</dd>
-      </div>
+      <div class="api-header"><span class="method method-get">GET</span><span class="api-path">/api/calendar</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>説明</dt><dd>月ごとの勉強日データ（草表示用）</dd><dt>クエリ</dt><dd><code>year</code>, <code>month</code></dd></div>
     </div>
-
-    <h3>カテゴリ（分野） <span class="tag tag-green">実装済み</span></h3>
-
     <div class="api-card">
-      <div class="api-header">
-        <span class="method method-get">GET</span>
-        <span class="api-path">/api/certifications/{id}/categories</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>説明</dt><dd>指定資格の分野一覧を取得</dd>
-      </div>
+      <div class="api-header"><span class="method method-get">GET</span><span class="api-path">/api/calendar/{date}</span><span class="auth-badge auth-required">要認証</span></div>
+      <div class="api-body"><dt>説明</dt><dd>特定日（yyyy-mm-dd）の勉強記録一覧</dd></div>
     </div>
-
-    <div class="api-card">
-      <div class="api-header">
-        <span class="method method-post">POST</span>
-        <span class="api-path">/api/certifications/{id}/categories</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>リクエスト</dt><dd><code>name</code>（必須）</dd>
-        <dt>レスポンス</dt><dd>201: <code>{ data: Category }</code></dd>
-      </div>
-    </div>
-
-    <div class="api-card">
-      <div class="api-header">
-        <span class="method method-put">PUT</span>
-        <span class="api-path">/api/categories/{id}</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>リクエスト</dt><dd><code>name</code>（必須）</dd>
-      </div>
-    </div>
-
-    <div class="api-card">
-      <div class="api-header">
-        <span class="method method-delete">DELETE</span>
-        <span class="api-path">/api/categories/{id}</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-    </div>
-
-    <h3>学習記録 <span class="tag tag-green">実装済み</span></h3>
-
-    <div class="api-card">
-      <div class="api-header">
-        <span class="method method-get">GET</span>
-        <span class="api-path">/api/study-logs</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>説明</dt><dd>ログインユーザーの学習記録一覧（ページネーション対応）</dd>
-        <dt>クエリ</dt><dd><code>certification_id</code>, <code>category_id</code>, <code>from</code>, <code>to</code> でフィルタ可能</dd>
-      </div>
-    </div>
-
-    <div class="api-card">
-      <div class="api-header">
-        <span class="method method-post">POST</span>
-        <span class="api-path">/api/study-logs</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>リクエスト</dt><dd><code>certification_id</code>(必須), <code>category_id</code>, <code>studied_on</code>(必須), <code>duration_minutes</code>(必須), <code>content</code></dd>
-        <dt>レスポンス</dt><dd>201: <code>{ data: StudyLog }</code></dd>
-      </div>
-    </div>
-
-    <div class="api-card">
-      <div class="api-header">
-        <span class="method method-put">PUT</span>
-        <span class="api-path">/api/study-logs/{id}</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-    </div>
-
-    <div class="api-card">
-      <div class="api-header">
-        <span class="method method-delete">DELETE</span>
-        <span class="api-path">/api/study-logs/{id}</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-    </div>
-
-    <h3>ダッシュボード <span class="tag tag-amber">未実装</span></h3>
-
-    <div class="api-card">
-      <div class="api-header">
-        <span class="method method-get">GET</span>
-        <span class="api-path">/api/dashboard/summary</span>
-        <span class="auth-badge auth-required">要認証</span>
-      </div>
-      <div class="api-body">
-        <dt>レスポンス例</dt>
-        <dd>
-<pre>{
-  "total_study_minutes": 4320,
-  "certifications_count": { "studying": 2, "passed": 1, "failed": 0 },
-  "weekly_minutes": [60, 90, 120, 0, 45, 80, 60],
-  "upcoming_exams": [
-    { "name": "応用情報技術者", "exam_date": "2027-04-18", "days_left": 167 }
-  ],
-  "category_breakdown": [
-    { "name": "ネットワーク", "minutes": 540 },
-    { "name": "セキュリティ", "minutes": 480 }
-  ]
-}</pre>
-        </dd>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6. Screens -->
-  <section id="screens">
-    <h2>6. 画面設計</h2>
-
-    <h3>画面一覧</h3>
-    <div class="screen-grid">
-      <div class="screen-card">
-        <h4>ログイン</h4>
-        <p>メールアドレスとパスワードでログイン。未登録の場合は登録画面へ誘導。</p>
-        <span class="screen-route">/login</span>
-      </div>
-      <div class="screen-card">
-        <h4>ユーザー登録</h4>
-        <p>名前・メール・パスワードを入力して新規登録。登録後は自動ログイン。</p>
-        <span class="screen-route">/register</span>
-      </div>
-      <div class="screen-card">
-        <h4>ダッシュボード</h4>
-        <p>総学習時間、今週の学習推移グラフ、直近の試験予定、分野別学習割合を表示。</p>
-        <span class="screen-route">/dashboard</span>
-      </div>
-      <div class="screen-card">
-        <h4>資格一覧</h4>
-        <p>登録済み資格のカード表示。ステータスバッジ、試験日までの残日数を表示。新規追加ボタン。</p>
-        <span class="screen-route">/certifications</span>
-      </div>
-      <div class="screen-card">
-        <h4>資格詳細</h4>
-        <p>資格の基本情報、分野一覧、分野別の学習時間グラフ、関連する学習記録の一覧。</p>
-        <span class="screen-route">/certifications/:id</span>
-      </div>
-      <div class="screen-card">
-        <h4>資格 作成・編集</h4>
-        <p>資格名・試験日・ステータス・メモを入力するフォーム。分野の追加・削除も可能。</p>
-        <span class="screen-route">/certifications/new<br>/certifications/:id/edit</span>
-      </div>
-      <div class="screen-card">
-        <h4>学習記録一覧</h4>
-        <p>日付降順で学習記録を表示。資格・分野でフィルタ可能。カレンダービューも用意。</p>
-        <span class="screen-route">/study-logs</span>
-      </div>
-      <div class="screen-card">
-        <h4>学習記録 作成・編集</h4>
-        <p>対象資格・分野を選択し、学習日・時間・内容を入力。</p>
-        <span class="screen-route">/study-logs/new<br>/study-logs/:id/edit</span>
-      </div>
-    </div>
-
-    <h3>画面遷移</h3>
-    <div class="arch-diagram">
-      <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg">
-        <defs><marker id="arr2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5 Z" fill="var(--fg-muted)"/></marker></defs>
-
-        <!-- Auth -->
-        <rect x="10" y="100" width="110" height="36" rx="6" fill="var(--surface-alt)" stroke="var(--border)" stroke-width="1"/>
-        <text x="65" y="122" text-anchor="middle" font-family="var(--font-body)" font-size="11" font-weight="500" fill="var(--fg)">ログイン</text>
-
-        <rect x="10" y="160" width="110" height="36" rx="6" fill="var(--surface-alt)" stroke="var(--border)" stroke-width="1"/>
-        <text x="65" y="182" text-anchor="middle" font-family="var(--font-body)" font-size="11" font-weight="500" fill="var(--fg)">ユーザー登録</text>
-
-        <line x1="65" y1="136" x2="65" y2="160" stroke="var(--fg-muted)" stroke-width="1" marker-end="url(#arr2)"/>
-        <line x1="65" y1="160" x2="65" y2="136" stroke="var(--fg-muted)" stroke-width="1" marker-start="url(#arr2)"/>
-
-        <!-- Dashboard -->
-        <rect x="180" y="100" width="130" height="36" rx="6" fill="var(--accent-light)" stroke="var(--accent)" stroke-width="1.5"/>
-        <text x="245" y="122" text-anchor="middle" font-family="var(--font-body)" font-size="11" font-weight="700" fill="var(--accent-fg)">ダッシュボード</text>
-
-        <line x1="120" y1="118" x2="180" y2="118" stroke="var(--fg-muted)" stroke-width="1" marker-end="url(#arr2)"/>
-        <text x="150" y="112" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--fg-muted)">認証後</text>
-
-        <!-- Certifications -->
-        <rect x="380" y="40" width="120" height="36" rx="6" fill="var(--green-light)" stroke="var(--green)" stroke-width="1"/>
-        <text x="440" y="62" text-anchor="middle" font-family="var(--font-body)" font-size="11" font-weight="500" fill="var(--green-fg)">資格一覧</text>
-
-        <rect x="560" y="40" width="110" height="36" rx="6" fill="var(--surface-alt)" stroke="var(--border)" stroke-width="1"/>
-        <text x="615" y="62" text-anchor="middle" font-family="var(--font-body)" font-size="11" font-weight="500" fill="var(--fg)">資格詳細</text>
-
-        <rect x="560" y="100" width="110" height="36" rx="6" fill="var(--surface-alt)" stroke="var(--border)" stroke-width="1"/>
-        <text x="615" y="122" text-anchor="middle" font-family="var(--font-body)" font-size="11" font-weight="500" fill="var(--fg)">資格 作成/編集</text>
-
-        <line x1="310" y1="110" x2="380" y2="58" stroke="var(--fg-muted)" stroke-width="1" marker-end="url(#arr2)"/>
-        <line x1="500" y1="58" x2="560" y2="58" stroke="var(--fg-muted)" stroke-width="1" marker-end="url(#arr2)"/>
-        <line x1="500" y1="68" x2="560" y2="108" stroke="var(--fg-muted)" stroke-width="1" marker-end="url(#arr2)"/>
-
-        <!-- Study Logs -->
-        <rect x="380" y="180" width="120" height="36" rx="6" fill="var(--amber-light)" stroke="var(--amber)" stroke-width="1"/>
-        <text x="440" y="202" text-anchor="middle" font-family="var(--font-body)" font-size="11" font-weight="500" fill="var(--amber-fg)">学習記録一覧</text>
-
-        <rect x="560" y="180" width="110" height="36" rx="6" fill="var(--surface-alt)" stroke="var(--border)" stroke-width="1"/>
-        <text x="615" y="202" text-anchor="middle" font-family="var(--font-body)" font-size="11" font-weight="500" fill="var(--fg)">記録 作成/編集</text>
-
-        <line x1="310" y1="126" x2="380" y2="192" stroke="var(--fg-muted)" stroke-width="1" marker-end="url(#arr2)"/>
-        <line x1="500" y1="198" x2="560" y2="198" stroke="var(--fg-muted)" stroke-width="1" marker-end="url(#arr2)"/>
-
-        <!-- Cross links -->
-        <line x1="615" y1="76" x2="440" y2="180" stroke="var(--fg-muted)" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arr2)"/>
-        <text x="545" y="140" font-family="var(--font-mono)" font-size="8" fill="var(--fg-muted)">学習記録へ</text>
-      </svg>
-    </div>
-
-    <h3>共通レイアウト</h3>
-    <ul>
-      <li><strong>ヘッダー</strong> — アプリ名ロゴ、ナビゲーション（ダッシュボード / 資格一覧 / 学習記録）、ユーザーメニュー（ログアウト）</li>
-      <li><strong>レスポンシブ</strong> — モバイルではハンバーガーメニューに切り替え。カード表示は1カラムにスタック</li>
-      <li><strong>トースト通知</strong> — 作成・更新・削除の成功/失敗をトーストで表示</li>
-    </ul>
   </section>
 
   <!-- 7. Auth & Security -->
@@ -1027,24 +654,24 @@
         <tbody>
           <tr><td>認証方式</td><td>Laravel Sanctum（トークンベース）</td></tr>
           <tr><td>トークン送信</td><td><code>Authorization: Bearer {token}</code> ヘッダー</td></tr>
-          <tr><td>トークン保存</td><td>フロントエンドの <code>localStorage</code> または <code>httpOnly Cookie</code>（検討中）</td></tr>
+          <tr><td>トークン保存</td><td>フロントエンドの <code>localStorage</code></td></tr>
           <tr><td>パスワード保存</td><td>bcrypt ハッシュ（Laravelデフォルト）</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h3>メールアドレスの保護</h3>
-    <p>メールアドレスはプレーンテキストで保存せず、2つのカラムに分離して保存する：</p>
+    <h3>メールアドレスの保護 <span class="tag tag-red">未実装</span></h3>
+    <p>メールアドレスはプレーンテキストで保存せず、ブラインドインデックス方式で2つのカラムに分離して保存する：</p>
     <ul>
       <li><code>email_encrypted</code> — Laravel <code>encrypt()</code> による AES-256-CBC 暗号化。表示・復号用</li>
       <li><code>email_hash</code> — SHA-256ハッシュ。ログイン時の検索用（UNIQUE制約）</li>
     </ul>
     <div class="note note-warn">
-      <strong>注意:</strong> <code>APP_KEY</code> が漏洩した場合は暗号化メールアドレスが復号可能になるため、本番環境では鍵のローテーション運用を検討する。
+      <strong>現状:</strong> 平文の <code>email</code> カラムで仮実装中。本番前に <code>email_encrypted</code> / <code>email_hash</code> への移行が必要。
     </div>
 
     <h3>認可（リソースアクセス制御）</h3>
-    <p>全リソースに対して <code>user_id</code> ベースのアクセス制御を実施。ログインユーザーは自分が作成したリソースのみ操作可能。Laravel Policy またはコントローラ内でチェックする。</p>
+    <p>全リソースに対して <code>user_id</code> ベースのアクセス制御を実施。ログインユーザーは自分が作成したリソースのみ操作可能。</p>
 
     <h3>バリデーション</h3>
     <div class="table-wrap">
@@ -1052,75 +679,63 @@
         <thead><tr><th>フィールド</th><th>ルール</th></tr></thead>
         <tbody>
           <tr><td class="col-name">name（ユーザー名）</td><td>必須, 文字列, 最大255</td></tr>
-          <tr><td class="col-name">email</td><td>必須, メール形式, 最大255, ハッシュ重複チェック</td></tr>
+          <tr><td class="col-name">email</td><td>必須, メール形式, 最大255, 重複チェック</td></tr>
           <tr><td class="col-name">password</td><td>必須, 文字列, 最小8文字, confirmed</td></tr>
           <tr><td class="col-name">certification.name</td><td>必須, 文字列, 最大255</td></tr>
           <tr><td class="col-name">exam_date</td><td>日付形式, 任意</td></tr>
           <tr><td class="col-name">status</td><td>in: studying, passed, failed</td></tr>
-          <tr><td class="col-name">duration_minutes</td><td>必須, 整数, 最小1</td></tr>
+          <tr><td class="col-name">duration_minutes</td><td>必須, 整数, 1〜1440</td></tr>
           <tr><td class="col-name">studied_on</td><td>必須, 日付形式</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <!-- 8. Schedule -->
+  <!-- 8. Gap Analysis -->
+  <section id="gap">
+    <h2>8. 実装状況・差分一覧</h2>
+    <p>PROJECT.mdの仕様に対する現在の実装状況。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>項目</th><th>仕様</th><th>状態</th><th>不足内容</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>ログイン画面</td><td>メール+パスワード</td><td class="gap-done">実装済</td><td>—</td></tr>
+          <tr><td>2</td><td>ユーザー登録画面</td><td>名前+メール+パスワード</td><td class="gap-done">実装済</td><td>—</td></tr>
+          <tr><td>3</td><td>ダッシュボード</td><td>資格一覧＋各資格の累計勉強時間</td><td class="gap-partial">一部</td><td>資格ごとの累計勉強時間表示、専用API</td></tr>
+          <tr><td>4</td><td>資格一覧</td><td>カード表示、ステータス、試験日</td><td class="gap-done">実装済</td><td>—</td></tr>
+          <tr><td>5</td><td>資格登録/編集</td><td>資格名・目標日・メモ・ステータス・分野管理</td><td class="gap-partial">一部</td><td>メモ入力欄、分野の編集機能</td></tr>
+          <tr><td>6</td><td>勉強記録一覧</td><td>フィルタ：資格/日付範囲/分野</td><td class="gap-partial">一部</td><td>フィルタUI（APIは対応済み）</td></tr>
+          <tr><td>7</td><td>勉強記録登録/編集</td><td>日付・時間・内容・資格紐付け・分野選択</td><td class="gap-partial">一部</td><td>編集機能</td></tr>
+          <tr><td>8</td><td>カレンダー画面</td><td>草表示＋日付クリックで記録表示</td><td class="gap-todo">未実装</td><td>画面・API両方</td></tr>
+          <tr><td>9</td><td>ヘルプ画面</td><td>目次＋キーワード検索＋取扱説明書</td><td class="gap-todo">未実装</td><td>画面全体</td></tr>
+          <tr><td>10</td><td>サイドメニュー</td><td>5項目（ダッシュボード/資格管理/勉強記録/カレンダー/ヘルプ）</td><td class="gap-partial">一部</td><td>カレンダー・ヘルプのリンク</td></tr>
+          <tr><td>11</td><td>GET /api/dashboard</td><td>資格一覧＋各累計勉強時間</td><td class="gap-todo">未実装</td><td>専用エンドポイント</td></tr>
+          <tr><td>12</td><td>GET /api/calendar</td><td>月ごとの勉強日データ</td><td class="gap-todo">未実装</td><td>エンドポイント</td></tr>
+          <tr><td>13</td><td>GET /api/calendar/{date}</td><td>特定日の記録</td><td class="gap-todo">未実装</td><td>エンドポイント</td></tr>
+          <tr><td>14</td><td>メール暗号化</td><td>ブラインドインデックス方式</td><td class="gap-todo">未実装</td><td>email_encrypted / email_hash カラム移行</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 9. Schedule -->
   <section id="schedule">
-    <h2>8. 開発スケジュール</h2>
+    <h2>9. 開発スケジュール</h2>
     <div class="table-wrap">
       <table>
         <thead><tr><th>フェーズ</th><th>内容</th><th>ステータス</th></tr></thead>
         <tbody>
-          <tr>
-            <td><strong>Phase 1</strong><br>環境構築</td>
-            <td>Docker環境（nginx, Laravel, Next.js, PostgreSQL）の構築</td>
-            <td><span class="tag tag-green">完了</span></td>
-          </tr>
-          <tr>
-            <td><strong>Phase 2</strong><br>DB設計</td>
-            <td>マイグレーション作成（users, certifications, categories, study_logs）</td>
-            <td><span class="tag tag-green">完了</span></td>
-          </tr>
-          <tr>
-            <td><strong>Phase 3</strong><br>認証</td>
-            <td>Sanctum導入、ユーザー登録/ログイン/ログアウトAPI</td>
-            <td><span class="tag tag-green">完了</span></td>
-          </tr>
-          <tr>
-            <td><strong>Phase 4</strong><br>CRUD API</td>
-            <td>資格・カテゴリ・学習記録のCRUD API。Eloquentモデル・リレーション定義</td>
-            <td><span class="tag tag-green">完了</span></td>
-          </tr>
-          <tr>
-            <td><strong>Phase 5</strong><br>フロントエンド</td>
-            <td>Next.js画面実装（認証画面、資格一覧/詳細、学習記録）。API連携</td>
-            <td><span class="tag tag-red">未着手</span></td>
-          </tr>
-          <tr>
-            <td><strong>Phase 6</strong><br>ダッシュボード</td>
-            <td>統計API実装、グラフ表示（学習時間推移、分野別割合）</td>
-            <td><span class="tag tag-red">未着手</span></td>
-          </tr>
-          <tr>
-            <td><strong>Phase 7</strong><br>テスト・仕上げ</td>
-            <td>PHPUnit / Jestによるテスト。レスポンシブ確認。エラーハンドリング整備</td>
-            <td><span class="tag tag-red">未着手</span></td>
-          </tr>
+          <tr><td><strong>Phase 1</strong><br>環境構築</td><td>Docker環境（nginx, Laravel, Next.js, PostgreSQL）</td><td><span class="tag tag-green">完了</span></td></tr>
+          <tr><td><strong>Phase 2</strong><br>DB設計</td><td>マイグレーション作成（users, certifications, categories, study_logs）</td><td><span class="tag tag-green">完了</span></td></tr>
+          <tr><td><strong>Phase 3</strong><br>認証</td><td>Sanctum導入、ユーザー登録/ログイン/ログアウトAPI</td><td><span class="tag tag-green">完了</span></td></tr>
+          <tr><td><strong>Phase 4</strong><br>CRUD API</td><td>資格・カテゴリ・学習記録のCRUD API + ダッシュボードAPI + カレンダーAPI</td><td><span class="tag tag-amber">一部完了</span></td></tr>
+          <tr><td><strong>Phase 5</strong><br>フロントエンド基本</td><td>認証画面、資格一覧/登録/編集、学習記録一覧/登録。API連携</td><td><span class="tag tag-amber">一部完了</span></td></tr>
+          <tr><td><strong>Phase 6</strong><br>フロントエンド追加</td><td>ダッシュボード改修、カレンダー画面、ヘルプ画面、フィルタUI、編集機能</td><td><span class="tag tag-red">未着手</span></td></tr>
+          <tr><td><strong>Phase 7</strong><br>セキュリティ</td><td>メール暗号化（ブラインドインデックス方式）への移行</td><td><span class="tag tag-red">未着手</span></td></tr>
+          <tr><td><strong>Phase 8</strong><br>テスト・仕上げ</td><td>PHPUnit / Jestテスト。レスポンシブ確認。エラーハンドリング整備</td><td><span class="tag tag-red">未着手</span></td></tr>
         </tbody>
       </table>
-    </div>
-
-    <h3>次のステップ</h3>
-    <div class="note">
-      <strong>Phase 4（CRUD API）</strong>が次の作業対象。以下を順に実装する：
-      <ol style="margin-top: 8px;">
-        <li>Certification / Category / StudyLog の Eloquent モデルとリレーション定義</li>
-        <li>CertificationController（一覧・作成・更新・削除）</li>
-        <li>CategoryController（ネストリソース）</li>
-        <li>StudyLogController（フィルタ・ページネーション対応）</li>
-        <li>FormRequest によるバリデーション分離</li>
-        <li>API Resource によるレスポンス整形</li>
-      </ol>
     </div>
   </section>
 </div>

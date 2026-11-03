@@ -11,3 +11,4 @@ Thumbs.db
 
 # Docker volumes（ホスト側に出ない想定だが念のため）
 db_data/
+"~$*" 
