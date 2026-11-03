@@ -6,6 +6,8 @@ import {
   LayoutDashboard,
   Award,
   BookOpen,
+  Calendar,
+  HelpCircle,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,8 +15,10 @@ import { useAuth } from "@/contexts/auth-context";
 
 const navigation = [
   { name: "ダッシュボード", href: "/dashboard", icon: LayoutDashboard },
-  { name: "資格一覧", href: "/certifications", icon: Award },
-  { name: "学習記録", href: "/study-logs", icon: BookOpen },
+  { name: "資格管理", href: "/certifications", icon: Award },
+  { name: "勉強記録", href: "/study-logs", icon: BookOpen },
+  { name: "カレンダー", href: "/calendar", icon: Calendar },
+  { name: "ヘルプ", href: "/help", icon: HelpCircle },
 ];
 
 export function Sidebar() {

@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CertificationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StudyLogController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +29,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 学習記録 CRUD
     Route::apiResource('study-logs', StudyLogController::class)->except(['show']);
+
+    // ダッシュボード
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // カレンダー
+    Route::get('/calendar', [CalendarController::class, 'index']);
+    Route::get('/calendar/{date}', [CalendarController::class, 'show']);
 });

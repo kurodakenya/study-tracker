@@ -243,3 +243,51 @@ export const studyLogs = {
     return request<null>(`/study-logs/${id}`, { method: "DELETE" });
   },
 };
+
+// --- Dashboard ---
+
+export interface DashboardCertification {
+  id: number;
+  name: string;
+  exam_date: string | null;
+  status: "studying" | "passed" | "failed";
+  memo: string | null;
+  total_minutes: number;
+  total_hours: number;
+  categories: { id: number; name: string }[];
+}
+
+export interface DashboardResponse {
+  data: DashboardCertification[];
+  summary: {
+    total_certifications: number;
+    total_minutes: number;
+    total_hours: number;
+  };
+}
+
+export const dashboard = {
+  get() {
+    return request<DashboardResponse>("/dashboard");
+  },
+};
+
+// --- Calendar ---
+
+export interface CalendarDay {
+  date: string;
+  total_minutes: number;
+  count: number;
+}
+
+export const calendar = {
+  list(year: number, month: number) {
+    return request<{ year: number; month: number; days: CalendarDay[] }>(
+      `/calendar?year=${year}&month=${month}`
+    );
+  },
+
+  getByDate(date: string) {
+    return request<{ data: StudyLog[] }>(`/calendar/${date}`);
+  },
+};

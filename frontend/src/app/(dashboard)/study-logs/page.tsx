@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Pencil, X, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,8 @@ export default function StudyLogsPage() {
   const [certs, setCerts] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [showFilter, setShowFilter] = useState(false);
   const [error, setError] = useState("");
 
   // Form state
@@ -29,16 +31,10 @@ export default function StudyLogsPage() {
   const [formMinutes, setFormMinutes] = useState("");
   const [formContent, setFormContent] = useState("");
 
-  const fetchLogs = useCallback(async () => {
-    try {
-      const res = await logApi.list();
-      setLogs(res.data);
-    } catch {
-      setError("学習記録の取得に失敗しました");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Filter state
+  const [filterCertId, setFilterCertId] = useState("");
+  const [filterFrom, setFilterFrom] = useState("");
+  const [filterTo, setFilterTo] = useState("");
 
   const fetchCerts = useCallback(async () => {
     try {
@@ -49,10 +45,30 @@ export default function StudyLogsPage() {
     }
   }, []);
 
+  const fetchLogs = useCallback(async () => {
+    try {
+      const params: Record<string, string | number> = {};
+      if (filterCertId) params.certification_id = Number(filterCertId);
+      if (filterFrom) params.from = filterFrom;
+      if (filterTo) params.to = filterTo;
+      const res = await logApi.list(
+        Object.keys(params).length > 0 ? params as Parameters<typeof logApi.list>[0] : undefined
+      );
+      setLogs(res.data);
+    } catch {
+      setError("学習記録の取得に失敗しました");
+    } finally {
+      setLoading(false);
+    }
+  }, [filterCertId, filterFrom, filterTo]);
+
+  useEffect(() => {
+    fetchCerts();
+  }, [fetchCerts]);
+
   useEffect(() => {
     fetchLogs();
-    fetchCerts();
-  }, [fetchLogs, fetchCerts]);
+  }, [fetchLogs]);
 
   const selectedCert = certs.find((c) => c.id === Number(formCertId));
 
@@ -63,20 +79,37 @@ export default function StudyLogsPage() {
     setFormMinutes("");
     setFormContent("");
     setShowForm(false);
+    setEditingId(null);
     setError("");
+  }
+
+  function startEdit(log: StudyLog) {
+    setEditingId(log.id);
+    setFormCertId(String(log.certification_id));
+    setFormCatId(log.category_id ? String(log.category_id) : "");
+    setFormDate(log.studied_on);
+    setFormMinutes(String(log.duration_minutes));
+    setFormContent(log.content || "");
+    setShowForm(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     try {
-      await logApi.create({
+      const payload = {
         certification_id: Number(formCertId),
         category_id: formCatId ? Number(formCatId) : undefined,
         studied_on: formDate,
         duration_minutes: Number(formMinutes),
         content: formContent || undefined,
-      });
+      };
+
+      if (editingId) {
+        await logApi.update(editingId, payload);
+      } else {
+        await logApi.create(payload);
+      }
       resetForm();
       fetchLogs();
     } catch (err) {
@@ -94,6 +127,12 @@ export default function StudyLogsPage() {
     }
   }
 
+  function clearFilter() {
+    setFilterCertId("");
+    setFilterFrom("");
+    setFilterTo("");
+  }
+
   function formatDuration(minutes: number): string {
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
@@ -101,6 +140,8 @@ export default function StudyLogsPage() {
     if (m === 0) return `${h}時間`;
     return `${h}時間${m}分`;
   }
+
+  const hasActiveFilter = filterCertId || filterFrom || filterTo;
 
   if (loading) {
     return (
@@ -114,19 +155,73 @@ export default function StudyLogsPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">学習記録</h1>
+          <h1 className="text-3xl font-bold tracking-tight">勉強記録</h1>
           <p className="text-muted-foreground">日々の学習を記録しましょう</p>
         </div>
-        <Button onClick={() => { resetForm(); setShowForm(true); }}>
-          <Plus className="h-4 w-4" />
-          記録を追加
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowFilter(!showFilter)}
+            className={hasActiveFilter ? "border-primary text-primary" : ""}
+          >
+            <Filter className="h-4 w-4" />
+            フィルタ{hasActiveFilter ? "（適用中）" : ""}
+          </Button>
+          <Button onClick={() => { resetForm(); setShowForm(true); }}>
+            <Plus className="h-4 w-4" />
+            記録を追加
+          </Button>
+        </div>
       </div>
 
       {error && (
         <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
+      )}
+
+      {showFilter && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="grid gap-4 sm:grid-cols-4">
+              <div className="space-y-2">
+                <Label>資格</Label>
+                <select
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={filterCertId}
+                  onChange={(e) => setFilterCertId(e.target.value)}
+                >
+                  <option value="">すべて</option>
+                  {certs.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label>開始日</Label>
+                <Input
+                  type="date"
+                  value={filterFrom}
+                  onChange={(e) => setFilterFrom(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>終了日</Label>
+                <Input
+                  type="date"
+                  value={filterTo}
+                  onChange={(e) => setFilterTo(e.target.value)}
+                />
+              </div>
+              <div className="flex items-end">
+                <Button variant="outline" size="sm" onClick={clearFilter}>
+                  <X className="h-4 w-4" />
+                  クリア
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {showForm && (
@@ -182,7 +277,7 @@ export default function StudyLogsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="minutes">学習時間（分）</Label>
+                  <Label htmlFor="minutes">勉強時間（分）</Label>
                   <Input
                     id="minutes"
                     type="number"
@@ -195,7 +290,7 @@ export default function StudyLogsPage() {
                   />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="content">メモ</Label>
+                  <Label htmlFor="content">やった内容</Label>
                   <Input
                     id="content"
                     placeholder="学習内容のメモ（任意）"
@@ -205,7 +300,7 @@ export default function StudyLogsPage() {
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
-                <Button type="submit">保存</Button>
+                <Button type="submit">{editingId ? "更新" : "保存"}</Button>
                 <Button type="button" variant="outline" onClick={resetForm}>
                   キャンセル
                 </Button>
@@ -219,7 +314,9 @@ export default function StudyLogsPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">
-              まだ学習記録がありません。「記録を追加」から始めましょう。
+              {hasActiveFilter
+                ? "条件に一致する記録がありません"
+                : "まだ学習記録がありません。「記録を追加」から始めましょう。"}
             </p>
           </CardContent>
         </Card>
@@ -234,7 +331,7 @@ export default function StudyLogsPage() {
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">資格</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">分野</th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">時間</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">メモ</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">やった内容</th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">操作</th>
                   </tr>
                 </thead>
@@ -261,14 +358,24 @@ export default function StudyLogsPage() {
                         {log.content || "—"}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleDelete(log.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => startEdit(log)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleDelete(log.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
