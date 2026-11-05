@@ -32,6 +32,7 @@ export default function CertificationsPage() {
   const [formName, setFormName] = useState("");
   const [formExamDate, setFormExamDate] = useState("");
   const [formStatus, setFormStatus] = useState<string>("studying");
+  const [formMemo, setFormMemo] = useState("");
   const [newCatName, setNewCatName] = useState("");
   const [addingCatFor, setAddingCatFor] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -56,6 +57,7 @@ export default function CertificationsPage() {
     setFormName(cert.name);
     setFormExamDate(cert.exam_date || "");
     setFormStatus(cert.status);
+    setFormMemo(cert.memo || "");
     setShowForm(false);
   }
 
@@ -63,6 +65,7 @@ export default function CertificationsPage() {
     setFormName("");
     setFormExamDate("");
     setFormStatus("studying");
+    setFormMemo("");
     setShowForm(false);
     setEditingId(null);
     setError("");
@@ -77,12 +80,14 @@ export default function CertificationsPage() {
           name: formName,
           exam_date: formExamDate || undefined,
           status: formStatus,
+          memo: formMemo || undefined,
         });
       } else {
         await certApi.create({
           name: formName,
           exam_date: formExamDate || undefined,
           status: formStatus,
+          memo: formMemo || undefined,
         });
       }
       resetForm();
@@ -193,9 +198,19 @@ export default function CertificationsPage() {
                     <option value="failed">不合格</option>
                   </select>
                 </div>
+                <div className="space-y-2 sm:col-span-3">
+                  <Label htmlFor="memo">メモ</Label>
+                  <textarea
+                    id="memo"
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
+                    placeholder="目標や対策メモなど（任意）"
+                    value={formMemo}
+                    onChange={(e) => setFormMemo(e.target.value)}
+                  />
+                </div>
               </div>
               <div className="mt-4 flex gap-2">
-                <Button type="submit">保存</Button>
+                <Button type="submit">{editingId ? "更新" : "保存"}</Button>
                 <Button type="button" variant="outline" onClick={resetForm}>
                   キャンセル
                 </Button>
@@ -234,6 +249,11 @@ export default function CertificationsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
+                  {cert.memo && (
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {cert.memo}
+                    </p>
+                  )}
                   <div>
                     <p className="mb-2 text-sm font-medium text-muted-foreground">
                       分野

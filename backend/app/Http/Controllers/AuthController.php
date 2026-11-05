@@ -28,7 +28,7 @@ class AuthController extends Controller
         // ユーザー作成
         $user = User::create([
             'name'            => $validated['name'],
-            'email_encrypted' => encrypt($validated['email']),
+            'email_encrypted' => $validated['email'],
             'email_hash'      => $emailHash,
             'password'        => $validated['password'],
         ]);

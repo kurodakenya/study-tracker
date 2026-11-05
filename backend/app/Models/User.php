@@ -30,7 +30,13 @@ class User extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'email_encrypted' => 'encrypted',
         ];
+    }
+
+    public function getEmailAttribute(): ?string
+    {
+        return $this->email_encrypted;
     }
 
     // このユーザーの資格一覧（1:N）
