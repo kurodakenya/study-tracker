@@ -7,6 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import {
   studyLogs as logApi,
   certifications as certApi,
   type StudyLog,
@@ -21,6 +25,9 @@ export default function StudyLogsPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [showFilter, setShowFilter] = useState(false);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   // Form state
   const [formCertId, setFormCertId] = useState("");
@@ -45,22 +52,27 @@ export default function StudyLogsPage() {
     }
   }, []);
 
-  const fetchLogs = useCallback(async () => {
+  const fetchLogs = useCallback(async (page = currentPage) => {
     try {
-      const params: Record<string, string | number> = {};
+      const params: Record<string, string | number> = { page };
       if (filterCertId) params.certification_id = Number(filterCertId);
       if (filterFrom) params.from = filterFrom;
       if (filterTo) params.to = filterTo;
       const res = await logApi.list(
-        Object.keys(params).length > 0 ? params as Parameters<typeof logApi.list>[0] : undefined
+        params as Parameters<typeof logApi.list>[0]
       );
       setLogs(res.data);
+      if (res.meta) {
+        setCurrentPage(res.meta.current_page);
+        setLastPage(res.meta.last_page);
+        setTotalCount(res.meta.total);
+      }
     } catch {
       setError("学習記録の取得に失敗しました");
     } finally {
       setLoading(false);
     }
-  }, [filterCertId, filterFrom, filterTo]);
+  }, [filterCertId, filterFrom, filterTo, currentPage]);
 
   useEffect(() => {
     fetchCerts();
@@ -131,6 +143,12 @@ export default function StudyLogsPage() {
     setFilterCertId("");
     setFilterFrom("");
     setFilterTo("");
+    setCurrentPage(1);
+  }
+
+  function goToPage(page: number) {
+    setCurrentPage(page);
+    fetchLogs(page);
   }
 
   function formatDuration(minutes: number): string {
@@ -382,6 +400,55 @@ export default function StudyLogsPage() {
                 </tbody>
               </table>
             </div>
+            {lastPage > 1 && (
+              <div className="flex items-center justify-between border-t border-border px-4 py-3">
+                <p className="text-sm text-muted-foreground">
+                  全{totalCount}件中 {(currentPage - 1) * 20 + 1}〜{Math.min(currentPage * 20, totalCount)}件
+                </p>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage <= 1}
+                    onClick={() => goToPage(currentPage - 1)}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    前へ
+                  </Button>
+                  {Array.from({ length: lastPage }, (_, i) => i + 1)
+                    .filter((p) => p === 1 || p === lastPage || Math.abs(p - currentPage) <= 1)
+                    .reduce<(number | "...")[]>((acc, p, idx, arr) => {
+                      if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("...");
+                      acc.push(p);
+                      return acc;
+                    }, [])
+                    .map((p, i) =>
+                      p === "..." ? (
+                        <span key={`dot-${i}`} className="px-1 text-sm text-muted-foreground">…</span>
+                      ) : (
+                        <Button
+                          key={p}
+                          variant={p === currentPage ? "default" : "outline"}
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={() => goToPage(p as number)}
+                        >
+                          {p}
+                        </Button>
+                      )
+                    )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage >= lastPage}
+                    onClick={() => goToPage(currentPage + 1)}
+                  >
+                    次へ
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

@@ -28,7 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
 
     // 学習記録 CRUD
-    Route::apiResource('study-logs', StudyLogController::class)->except(['show']);
+    Route::apiResource('study-logs', StudyLogController::class);
 
     // ダッシュボード
     Route::get('/dashboard', [DashboardController::class, 'index']);

@@ -35,6 +35,8 @@ export default function CertificationsPage() {
   const [formMemo, setFormMemo] = useState("");
   const [newCatName, setNewCatName] = useState("");
   const [addingCatFor, setAddingCatFor] = useState<number | null>(null);
+  const [editingCatId, setEditingCatId] = useState<number | null>(null);
+  const [editCatName, setEditCatName] = useState("");
   const [error, setError] = useState("");
 
   const fetchCerts = useCallback(async () => {
@@ -113,6 +115,23 @@ export default function CertificationsPage() {
       await catApi.create(certId, { name: newCatName.trim() });
       setNewCatName("");
       setAddingCatFor(null);
+      fetchCerts();
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }
+
+  function startEditCategory(cat: { id: number; name: string }) {
+    setEditingCatId(cat.id);
+    setEditCatName(cat.name);
+  }
+
+  async function handleUpdateCategory(catId: number) {
+    if (!editCatName.trim()) return;
+    try {
+      await catApi.update(catId, { name: editCatName.trim() });
+      setEditingCatId(null);
+      setEditCatName("");
       fetchCerts();
     } catch (err) {
       setError((err as Error).message);
@@ -259,20 +278,63 @@ export default function CertificationsPage() {
                       分野
                     </p>
                     <div className="flex flex-wrap gap-1.5">
-                      {cert.categories.map((cat) => (
-                        <span
-                          key={cat.id}
-                          className="group flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs"
-                        >
-                          {cat.name}
-                          <button
-                            onClick={() => handleDeleteCategory(cat.id)}
-                            className="hidden text-muted-foreground hover:text-destructive group-hover:inline"
+                      {cert.categories.map((cat) =>
+                        editingCatId === cat.id ? (
+                          <div key={cat.id} className="flex items-center gap-1">
+                            <Input
+                              className="h-7 w-28 text-xs"
+                              value={editCatName}
+                              onChange={(e) => setEditCatName(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  handleUpdateCategory(cat.id);
+                                }
+                                if (e.key === "Escape") {
+                                  setEditingCatId(null);
+                                }
+                              }}
+                              autoFocus
+                            />
+                            <Button
+                              size="sm"
+                              className="h-7 px-2 text-xs"
+                              onClick={() => handleUpdateCategory(cat.id)}
+                            >
+                              保存
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 px-2 text-xs"
+                              onClick={() => setEditingCatId(null)}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <span
+                            key={cat.id}
+                            className="group flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs cursor-pointer"
+                            onDoubleClick={() => startEditCategory(cat)}
                           >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
+                            {cat.name}
+                            <button
+                              onClick={() => startEditCategory(cat)}
+                              className="hidden text-muted-foreground hover:text-primary group-hover:inline"
+                              title="名前を変更"
+                            >
+                              <Pencil className="h-3 w-3" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCategory(cat.id)}
+                              className="hidden text-muted-foreground hover:text-destructive group-hover:inline"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        )
+                      )}
                       {addingCatFor === cert.id ? (
                         <div className="flex items-center gap-1">
                           <Input

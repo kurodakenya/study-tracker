@@ -210,6 +210,10 @@ export const studyLogs = {
     );
   },
 
+  get(id: number) {
+    return request<{ data: StudyLog }>(`/study-logs/${id}`);
+  },
+
   create(data: {
     certification_id: number;
     category_id?: number;

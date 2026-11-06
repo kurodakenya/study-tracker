@@ -47,6 +47,19 @@ class StudyLogController extends Controller
     }
 
     /**
+     * 学習記録詳細
+     * GET /api/study-logs/{studyLog}
+     */
+    public function show(Request $request, StudyLog $studyLog)
+    {
+        if ($studyLog->user_id !== $request->user()->id) {
+            return response()->json(['message' => '権限がありません。'], 403);
+        }
+
+        return new StudyLogResource($studyLog->load(['certification', 'category']));
+    }
+
+    /**
      * 学習記録作成
      * POST /api/study-logs
      *
