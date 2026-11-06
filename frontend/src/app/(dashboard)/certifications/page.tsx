@@ -316,7 +316,7 @@ export default function CertificationsPage() {
                           <span
                             key={cat.id}
                             className="group flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs cursor-pointer"
-                            onDoubleClick={() => startEditCategory(cat)}
+                            onDoubleClick={(e) => { e.preventDefault(); startEditCategory(cat); }}
                           >
                             {cat.name}
                             <button
