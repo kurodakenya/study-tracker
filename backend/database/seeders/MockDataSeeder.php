@@ -14,10 +14,12 @@ class MockDataSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::where('email', 'test@example.com')->first()
+        $emailHash = hash('sha256', 'test@example.com');
+        $user = User::where('email_hash', $emailHash)->first()
             ?? User::factory()->create([
                 'name' => 'Test User',
-                'email' => 'test@example.com',
+                'email_encrypted' => 'test@example.com',
+                'email_hash' => $emailHash,
             ]);
 
         // 基本情報技術者試験（2026年4月 春期を想定）
