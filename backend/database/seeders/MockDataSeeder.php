@@ -23,6 +23,11 @@ class MockDataSeeder extends Seeder
             ]);
 
         // 基本情報技術者試験（2026年4月 春期を想定）
+        $cert = Certification::where('user_id', $user->id)
+            ->where('name', '基本情報技術者試験')->first();
+        if ($cert) {
+            return; // 既にシード済み
+        }
         $cert = Certification::create([
             'user_id' => $user->id,
             'name' => '基本情報技術者試験',

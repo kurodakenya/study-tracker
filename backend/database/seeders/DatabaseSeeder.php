@@ -15,11 +15,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email_encrypted' => 'test@example.com',
-            'email_hash' => hash('sha256', 'test@example.com'),
-        ]);
+        $emailHash = hash('sha256', 'test@example.com');
+        if (! User::where('email_hash', $emailHash)->exists()) {
+            User::factory()->create([
+                'name' => 'Test User',
+                'email_encrypted' => 'test@example.com',
+                'email_hash' => $emailHash,
+            ]);
+        }
 
         $this->call(MockDataSeeder::class);
     }
