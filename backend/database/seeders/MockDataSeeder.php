@@ -95,6 +95,49 @@ class MockDataSeeder extends Seeder
 
             $dayIndex++;
         }
+
+        // 応用情報技術者試験
+        $apCert = Certification::create([
+            'user_id' => $user->id,
+            'name' => '応用情報技術者試験',
+            'exam_date' => '2027-04-18',
+            'status' => 'studying',
+            'memo' => '2027年 春期試験を受験予定',
+        ]);
+
+        $apCategories = [];
+        foreach ([
+            'テクノロジ系（基礎理論・コンピュータ）',
+            'テクノロジ系（技術要素）',
+            'テクノロジ系（開発技術）',
+            'マネジメント系',
+            'ストラテジ系',
+            '午後問題（記述対策）',
+        ] as $name) {
+            $apCategories[] = Category::create([
+                'certification_id' => $apCert->id,
+                'name' => $name,
+            ]);
+        }
+
+        // 11月の勉強記録（4日分 × 45分）
+        $apLogs = [
+            ['date' => '2026-11-08', 'category' => 0, 'content' => 'テキスト 基礎理論（離散数学・応用数学）を読み進めた'],
+            ['date' => '2026-11-10', 'category' => 1, 'content' => 'テキスト ネットワーク（TCP/IP・ルーティング）を学習'],
+            ['date' => '2026-11-11', 'category' => 1, 'content' => 'テキスト データベース（正規化・SQL応用）を学習'],
+            ['date' => '2026-11-14', 'category' => 4, 'content' => 'テキスト 経営戦略・情報戦略の章を読み進めた'],
+        ];
+
+        foreach ($apLogs as $log) {
+            StudyLog::create([
+                'user_id' => $user->id,
+                'certification_id' => $apCert->id,
+                'category_id' => $apCategories[$log['category']]->id,
+                'studied_on' => $log['date'],
+                'duration_minutes' => 45,
+                'content' => $log['content'],
+            ]);
+        }
     }
 
     /**
